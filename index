@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Matrix — Codebook Generator</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f5f4;
+    --bg-subtle: #fafaf9;
+    --card: #ffffff;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --text: #0c0a09;
+    --text-secondary: #44403c;
+    --text-muted: #78716c;
+    --accent: #0e7490;
+    --accent-hover: #155e75;
+    --accent-muted: rgba(14, 116, 144, 0.12);
+    --tl: #1e40af;
+    --tr: #166534;
+    --bl: #92400e;
+    --br: #6b21a8;
+    --radius: 10px;
+    --radius-sm: 5px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app { max-width: 980px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  header {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0;
+    background: linear-gradient(135deg, #0e7490, #6b21a8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin: 4px 0 0; }
+  .version { color: var(--text-muted); font-size: 12px; font-family: ui-monospace, monospace; }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+
+  .controls { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+  .field { flex: 1 1 240px; min-width: 180px; }
+  .field label {
+    display: block; font-size: 11px; color: var(--text-secondary);
+    margin-bottom: 6px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  input[type="text"] {
+    width: 100%; padding: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-muted);
+  }
+
+  .btn {
+    padding: 10px 16px;
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+    white-space: nowrap; font-family: inherit;
+  }
+  .btn:hover { background: var(--bg-subtle); border-color: var(--accent); }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: 0.5; cursor: wait; }
+  .btn.primary {
+    background: var(--accent); color: #ffffff;
+    border-color: var(--accent); font-weight: 600;
+  }
+  .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  /* Toggle switch */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .toggle {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background: var(--border-strong);
+    border-radius: 22px;
+    transition: background 0.2s;
+  }
+  .toggle .slider::before {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    left: 3px; top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .toggle input:checked + .slider { background: var(--accent); }
+  .toggle input:checked + .slider::before { transform: translateX(18px); }
+
+  /* Card scene */
+  .card-scene {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 85.6 / 53.98;   /* ISO/IEC 7810 ID-1 (credit card) */
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.15s;
+  }
+  .card.loading { opacity: 0.45; }
+
+  .matrix {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+    min-height: 0;
+  }
+
+  .tile {
+    position: relative;
+    background: #fff;
+    border: 1px solid #c7c5c4;
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    container-type: size;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .tile:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(14, 116, 144, 0.18);
+    z-index: 1;
+  }
+  .tile .center {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 700; color: var(--text);
+    line-height: 1; font-size: 58cqmin;
+  }
+  .tile .corner {
+    position: absolute;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 600; line-height: 1; font-size: 28cqmin;
+  }
+  .tile .tl { top: 6%; left: 8%; color: var(--tl); }
+  .tile .tr { top: 6%; right: 8%; color: var(--tr); }
+  .tile .bl { bottom: 6%; left: 8%; color: var(--bl); }
+  .tile .br { bottom: 6%; right: 8%; color: var(--br); }
+  .tile.matched {
+    border-color: var(--accent);
+    background: rgba(14, 116, 144, 0.06);
+    box-shadow: 0 0 0 2px var(--accent-muted);
+  }
+
+  .card-info {
+    flex: 0 0 auto;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-strong);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+  .card-info .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+  }
+  .card-info .seed {
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+  }
+  .card-info .datetime {
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .tools { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 640px) { .tools { grid-template-columns: 1fr; } }
+
+  .tool h3 {
+    font-size: 12px; margin: 0 0 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+  }
+
+  .lookup-result {
+    margin-top: 12px; font-size: 13px;
+    color: var(--text-secondary); min-height: 20px; line-height: 1.8;
+  }
+  .lookup-result .hit {
+    display: inline-block; padding: 2px 8px;
+    border-radius: var(--radius-sm); margin: 2px 4px 2px 0;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    background: var(--accent-muted); color: var(--accent-hover);
+  }
+
+  .legend { display: grid; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+  .hint { color: var(--text-muted); font-size: 12px; margin-left: 4px; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: #ffffff;
+    padding: 10px 22px; border-radius: 999px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  footer { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 32px; }
+  footer .copyright {
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    font-family: ui-monospace, monospace;
+  }
+
+  /* ==========================================================
+     Print: クレジットカード原寸 85.6 × 53.98mm
+     ========================================================== */
+  @media print {
+    @page { margin: 5mm; }
+    body { background: #fff; color: #000; }
+    .panel, .tools, footer, header, .actions, .toast, .controls, .toggle-row {
+      display: none !important;
+    }
+    .app { padding: 0; max-width: none; }
+    .card-scene { margin: 0; display: block; }
+
+    .card {
+      width: 85.6mm;
+      height: 53.98mm;
+      max-width: none;
+      background: #fff;
+      border: 0.25mm solid #000;
+      border-radius: 2mm;
+      padding: 1.2mm;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+      page-break-inside: avoid;
+    }
+    .matrix {
+      flex: 0 0 auto;
+      height: 44.98mm;
+      gap: 0.8mm;
+      margin-bottom: 1mm;
+    }
+    .tile {
+      background: #fff;
+      border: 0.2mm solid #000;
+      border-radius: 0;
+      box-shadow: none !important;
+    }
+    .tile .center { color: #000; font-weight: 700; font-size: 4.5mm; }
+    .tile .corner { color: #000 !important; font-weight: 600; font-size: 2.4mm; }
+    .tile.matched { background: #fff; border-color: #000; box-shadow: none !important; }
+
+    .card-info {
+      flex: 1 1 auto;
+      padding-top: 0.8mm;
+      border-top: 0.2mm solid #000;
+      font-size: 2.2mm;
+      line-height: 1.35;
+      letter-spacing: 0.05em;
+      justify-content: center;
+    }
+    .card-info .seed { color: #000; max-width: 62%; }
+    .card-info .datetime { color: #000; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Crypto Matrix</h1>
+      <p class="subtitle">Deterministic codebook generator</p>
+    </div>
+    <span class="version">v3.0 · card</span>
+  </header>
+
+  <section class="panel">
+    <div class="controls">
+      <div class="field">
+        <label for="seed-input">Seed (text or number, any length)</label>
+        <input id="seed-input" type="text" value="0" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="btn primary" id="btn-generate">Generate</button>
+      <button class="btn" id="btn-random">Random</button>
+      <button class="btn" id="btn-copy">Copy</button>
+    </div>
+    <div class="toggle-row">
+      <label class="toggle">
+        <input type="checkbox" id="toggle-seed" checked>
+        <span class="slider"></span>
+      </label>
+      <span>Show seed on card</span>
+    </div>
+  </section>
+
+  <div class="card-scene">
+    <div class="card" id="card">
+      <div class="matrix" id="matrix"></div>
+      <div class="card-info">
+        <div class="row">
+          <span class="seed" id="card-seed">SEED: —</span>
+          <span class="datetime" id="card-datetime">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="tools">
+      <div class="tool">
+        <h3>Character Lookup</h3>
+        <input id="lookup-input" type="text" maxlength="1" placeholder="Type a character">
+        <div class="lookup-result" id="lookup-result"></div>
+      </div>
+      <div class="tool">
+        <h3>Legend (screen only)</h3>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--tl);"></span>Top-left · digits</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--tr);"></span>Top-right · alphanum</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--bl);"></span>Bottom-left · alphanum + symbols</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--br);"></span>Bottom-right · correspondence</div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btn-print">Print / Save PDF</button>
+      <span class="hint">クレジットカード原寸 85.6 × 53.98mm ／ 暗号：PBKDF2-SHA256 (200,000 反復)</span>
+    </div>
+  </section>
+
+  <footer>
+    <div>PBKDF2-SHA256 · 40 tiles · 5 character positions each</div>
+    <div class="copyright">2026 YNGMT</div>
+  </footer>
+</div>
+
+<template id="tile-template">
+  <div class="tile">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+    <span class="center"></span>
+  </div>
+</template>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ==========================================================
+     Configuration
+     ========================================================== */
+  const MAX_TILE_COUNT   = 40;
+  const PBKDF2_ITERATIONS = 200000;
+  const PBKDF2_SALT      = 'crypto-matrix-v3';
+  const STREAM_BYTES     = 2048;   // 全シャッフルで使う乱数ストリーム長
+
+  /* ==========================================================
+     Cryptographic seed derivation
+     PBKDF2-SHA256 (200k iterations) → 256-bit key
+     → SHA-256 counter mode → byte stream
+     ========================================================== */
+  async function deriveStream(seedStr, totalBytes) {
+    const enc = new TextEncoder();
+
+    // 1) PBKDF2: 任意長シード → 256bit鍵 (200,000反復)
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', enc.encode(seedStr), 'PBKDF2', false, ['deriveBits']
+    );
+    const keyBits = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt: enc.encode(PBKDF2_SALT),
+        iterations: PBKDF2_ITERATIONS,
+        hash: 'SHA-256'
+      },
+      keyMaterial,
+      256
+    );
+    const key = new Uint8Array(keyBits);
+
+    // 2) SHA-256 counter mode で拡張 (key || counter)
+    const blocks = Math.ceil(totalBytes / 32);
+    const out = new Uint8Array(blocks * 32);
+    const inputBuf = new Uint8Array(32 + 4);  // key(32) + counter(4)
+    inputBuf.set(key, 0);
+    const dv = new DataView(inputBuf.buffer);
+
+    for (let i = 0; i < blocks; i++) {
+      dv.setUint32(32, i, false);
+      const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', inputBuf));
+      out.set(hash, i * 32);
+    }
+    return out.slice(0, totalBytes);
+  }
+
+  /* ==========================================================
+     Synchronous PRNG backed by pre-derived bytes
+     ========================================================== */
+  function BytePRNG(bytes) {
+    this.bytes = bytes;
+    this.pos = 0;
+  }
+  BytePRNG.prototype.nextUint32 = function () {
+    if (this.pos + 4 > this.bytes.length) this.pos = 0;
+    const b = this.bytes, p = this.pos;
+    const v = (b[p] << 24) | (b[p + 1] << 16) | (b[p + 2] << 8) | b[p + 3];
+    this.pos += 4;
+    return v >>> 0;
+  };
+  BytePRNG.prototype.rand = function () {
+    return this.nextUint32() / 4294967296;
+  };
+
+  /* ==========================================================
+     Helpers
+     ========================================================== */
+  function shuffle(arr, prng) {
+    const r = arr.slice();
+    for (let i = r.length - 1; i > 0; i--) {
+      const j = Math.floor(prng.rand() * (i + 1));
+      [r[i], r[j]] = [r[j], r[i]];
+    }
+    return r;
+  }
+  function repeatArray(arr, n) {
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(...arr);
+    return out;
+  }
+
+  /* ==========================================================
+     Character sets
+     ========================================================== */
+  const digits  = Array.from({ length: 10 }, (_, i) => String(i));
+  const lower   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
+  const upper   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+  const symbols = ['-', '_', '!', '#', '$', '%', '&', '^', '(', ')', '+', '*', '/'];
+
+  /* ==========================================================
+     Value generation (deterministic for given seed)
+     ========================================================== */
+  function fillToMax(chars) {
+    return repeatArray(chars, Math.ceil(MAX_TILE_COUNT / chars.length));
+  }
+  function createValues(prng) {
+    const symbol4 = shuffle(symbols, prng).slice(0, 4);
+    const roots = [...digits, ...lower, ...symbol4];
+
+    const numbers    = shuffle(fillToMax(digits), prng);
+    const alnum      = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);
+    const alnumSym   = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng);
+    const correspond = shuffle(roots, prng);
+
+    const items = [];
+    for (let i = 0; i < MAX_TILE_COUNT; i++) {
+      items.push({
+        center: roots[i],
+        tl: numbers[i],
+        tr: alnum[i],
+        bl: alnumSym[i],
+        br: correspond[i]
+      });
+    }
+    return items;
+  }
+
+  /* ==========================================================
+     DOM refs
+     ========================================================== */
+  const cardEl       = document.getElementById('card');
+  const matrixEl     = document.getElementById('matrix');
+  const seedInput    = document.getElementById('seed-input');
+  const lookupInput  = document.getElementById('lookup-input');
+  const lookupResult = document.getElementById('lookup-result');
+  const tileTpl      = document.getElementById('tile-template');
+  const toastEl      = document.getElementById('toast');
+  const toggleSeed   = document.getElementById('toggle-seed');
+  const cardSeedEl   = document.getElementById('card-seed');
+  const cardDtEl     = document.getElementById('card-datetime');
+  const btnGenerate  = document.getElementById('btn-generate');
+  const btnRandom    = document.getElementById('btn-random');
+  const btnCopy      = document.getElementById('btn-copy');
+  const btnPrint     = document.getElementById('btn-print');
+
+  let currentData  = [];
+  let currentTiles = [];
+  let currentSeed  = '0';
+  let issuedAt     = new Date();
+
+  /* ==========================================================
+     Render matrix
+     ========================================================== */
+  function render() {
+    matrixEl.innerHTML = '';
+    currentTiles = [];
+    const frag = document.createDocumentFragment();
+    currentData.forEach(v => {
+      const clone = tileTpl.content.cloneNode(true);
+      const tile = clone.querySelector('.tile');
+      tile.querySelector('.center').textContent = v.center;
+      tile.querySelector('.tl').textContent = v.tl;
+      tile.querySelector('.tr').textContent = v.tr;
+      tile.querySelector('.bl').textContent = v.bl;
+      tile.querySelector('.br').textContent = v.br;
+      frag.appendChild(clone);
+      currentTiles.push(tile);
+    });
+    matrixEl.appendChild(frag);
+  }
+
+  /* ==========================================================
+     Card footer (seed + issued datetime)
+     ========================================================== */
+  function formatDateTime(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+           `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+  function updateCardInfo() {
+    if (toggleSeed.checked) {
+      cardSeedEl.textContent = 'SEED: ' + currentSeed;
+    } else {
+      cardSeedEl.textContent = 'SEED: ********';
+    }
+    // 発行年月日時刻はトグルに関係なく常に表示
+    cardDtEl.textContent = formatDateTime(issuedAt);
+  }
+
+  /* ==========================================================
+     Regenerate (async: PBKDF2)
+     ========================================================== */
+  async function regenerate(seedStr, newIssue) {
+    currentSeed = String(seedStr);
+    if (newIssue) issuedAt = new Date();
+
+    cardEl.classList.add('loading');
+    btnGenerate.disabled = true;
+    btnRandom.disabled   = true;
+    btnCopy.disabled     = true;
+
+    try {
+      const bytes = await deriveStream(currentSeed, STREAM_BYTES);
+      const prng = new BytePRNG(bytes);
+      currentData = createValues(prng);
+      render();
+      updateCardInfo();
+      applyLookup(lookupInput.value.trim().slice(0, 1));
+    } catch (err) {
+      console.error(err);
+      toast('生成に失敗しました');
+    } finally {
+      cardEl.classList.remove('loading');
+      btnGenerate.disabled = false;
+      btnRandom.disabled   = false;
+      btnCopy.disabled     = false;
+    }
+  }
+
+  /* ==========================================================
+     Lookup
+     ========================================================== */
+  function applyLookup(ch) {
+    currentTiles.forEach(t => t.classList.remove('matched'));
+    lookupResult.innerHTML = '';
+    if (!ch) return;
+
+    const hits = [];
+    currentData.forEach((v, i) => {
+      const pos = [];
+      if (v.center === ch) pos.push('center');
+      if (v.tl === ch)     pos.push('top-left');
+      if (v.tr === ch)     pos.push('top-right');
+      if (v.bl === ch)     pos.push('bottom-left');
+      if (v.br === ch)     pos.push('bottom-right');
+      if (pos.length) {
+        currentTiles[i].classList.add('matched');
+        hits.push(`#${String(i + 1).padStart(2, '0')} ${pos.join('/')}`);
+      }
+    });
+
+    if (hits.length === 0) {
+      lookupResult.textContent = `"${ch}" not found.`;
+    } else {
+      lookupResult.innerHTML =
+        hits.slice(0, 12).map(h => `<span class="hit">${h}</span>`).join('') +
+        (hits.length > 12
+          ? `<span style="color:var(--text-muted)"> +${hits.length - 12} more</span>`
+          : '');
+    }
+  }
+
+  /* ==========================================================
+     Utils
+     ========================================================== */
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 1600);
+  }
+  function generateStrongSeed() {
+    // 64-bit hex seed
+    const buf = new Uint8Array(8);
+    crypto.getRandomValues(buf);
+    return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  /* ==========================================================
+     Events
+     ========================================================== */
+  btnGenerate.addEventListener('click', () => {
+    const s = seedInput.value.trim();
+    if (!s) { toast('シードを入力してください'); return; }
+    regenerate(s, true);
+  });
+
+  btnRandom.addEventListener('click', () => {
+    const s = generateStrongSeed();
+    seedInput.value = s;
+    regenerate(s, true);
+    toast('Seed: ' + s);
+  });
+
+  btnCopy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(currentSeed);
+      toast('Seed copied');
+    } catch {
+      seedInput.select();
+      document.execCommand('copy');
+      toast('Seed copied');
+    }
+  });
+
+  btnPrint.addEventListener('click', () => window.print());
+
+  toggleSeed.addEventListener('change', updateCardInfo);
+
+  lookupInput.addEventListener('input', () => {
+    applyLookup(lookupInput.value.trim().slice(0, 1));
+  });
+
+  seedInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') btnGenerate.click();
+  });
+
+  /* ==========================================================
+     Init
+     ========================================================== */
+  regenerate('0', true);
+})();
+</script>
+</body>
+</html>
