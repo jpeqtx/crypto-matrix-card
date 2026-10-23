@@ -299,18 +299,41 @@
      Print: クレジットカード原寸 85.6 × 53.98mm
      ========================================================== */
   @media print {
-    @page { margin: 5mm; }
-    body { background: #fff; color: #000; }
+    @page { margin: 5mm; size: auto; }
+
+    /* 画面表示用の余白・高さをリセット（2ページ目防止） */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: auto !important;
+      height: auto !important;
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .app {
+      padding: 0 !important;
+      margin: 0 !important;
+      max-width: none !important;
+      min-height: auto !important;
+    }
+    .card-scene {
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+      height: auto !important;
+    }
+
+    /* カード以外の要素を完全に非表示 */
     .panel, .tools, footer, header, .actions, .toast, .controls, .toggle-row {
       display: none !important;
     }
-    .app { padding: 0; max-width: none; }
-    .card-scene { margin: 0; display: block; }
 
+    /* カード本体 */
     .card {
       width: 85.6mm;
       height: 53.98mm;
       max-width: none;
+      margin: 0 !important;
       background: #fff;
       border: 0.25mm solid #000;
       border-radius: 2mm;
@@ -318,8 +341,13 @@
       box-shadow: none;
       display: flex;
       flex-direction: column;
+
+      /* 改ページ防止 */
+      break-inside: avoid;
       page-break-inside: avoid;
+      page-break-after: avoid;
     }
+
     .matrix {
       flex: 0 0 auto;
       height: 44.98mm;
