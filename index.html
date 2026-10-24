@@ -18,11 +18,11 @@
     --accent: #0e7490;
     --accent-hover: #155e75;
     --accent-muted: rgba(14, 116, 144, 0.12);
-    /* Okabe-Ito colorblind-safe palette */
-    --tl: #0072B2;
-    --tr: #009E73;
-    --bl: #D55E00;
-    --br: #CC79A7;
+    /* CUD推奨配色セット（ガイドブック2018）準拠 */
+    --tl: #ff2800; /* CUD 赤 */
+    --tr: #0072b2; /* CUD 青 */
+    --bl: #009e73; /* CUD 青緑 */
+    --br: #faf500; /* CUD 黄 */
     --radius: 10px;
     --radius-sm: 5px;
   }
@@ -315,7 +315,7 @@
     }
     .tile .corner {
       color: #000 !important; font-weight: 600; font-size: 2.4mm;
-      border-bottom: none !important; /* 印刷時は補助線を消す */
+      border-bottom: none !important;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
     .tile.matched, .tile.traced, .tile.trace-start {
