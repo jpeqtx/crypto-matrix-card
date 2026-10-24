@@ -18,10 +18,11 @@
     --accent: #0e7490;
     --accent-hover: #155e75;
     --accent-muted: rgba(14, 116, 144, 0.12);
-    --tl: #1e40af;
-    --tr: #166534;
-    --bl: #92400e;
-    --br: #6b21a8;
+    /* Okabe-Ito colorblind-safe palette */
+    --tl: #0072B2;
+    --tr: #009E73;
+    --bl: #D55E00;
+    --br: #CC79A7;
     --radius: 10px;
     --radius-sm: 5px;
   }
@@ -142,11 +143,12 @@
   .tile .corner {
     position: absolute; font-family: ui-monospace, monospace;
     font-weight: 600; line-height: 1; font-size: 28cqmin;
+    display: inline-block;
   }
-  .tile .tl { top: 6%; left: 8%; color: var(--tl); }
-  .tile .tr { top: 6%; right: 8%; color: var(--tr); }
-  .tile .bl { bottom: 6%; left: 8%; color: var(--bl); }
-  .tile .br { bottom: 6%; right: 8%; color: var(--br); }
+  .tile .tl { top: 6%; left: 8%; color: var(--tl); border-bottom: 1.5px solid currentColor; }
+  .tile .tr { top: 6%; right: 8%; color: var(--tr); border-bottom: 1.5px dashed currentColor; }
+  .tile .bl { bottom: 6%; left: 8%; color: var(--bl); border-bottom: 1.5px dotted currentColor; }
+  .tile .br { bottom: 6%; right: 8%; color: var(--br); border-bottom: 3px double currentColor; }
   .tile.matched {
     border-color: var(--accent);
     background: rgba(14, 116, 144, 0.06);
@@ -229,7 +231,23 @@
   }
   .legend { display: grid; gap: 8px; }
   .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
-  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  .legend-icon {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--text-muted);
+    border-radius: 2px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .legend-icon::after {
+    content: '';
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .legend-icon.tl-icon::after { top: 2px; left: 2px; background: var(--tl); }
+  .legend-icon.tr-icon::after { top: 2px; right: 2px; background: var(--tr); }
+  .legend-icon.bl-icon::after { bottom: 2px; left: 2px; background: var(--bl); }
+  .legend-icon.br-icon::after { bottom: 2px; right: 2px; background: var(--br); }
 
   .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
   .hint { color: var(--text-muted); font-size: 12px; margin-left: 4px; }
@@ -297,6 +315,7 @@
     }
     .tile .corner {
       color: #000 !important; font-weight: 600; font-size: 2.4mm;
+      border-bottom: none !important; /* 印刷時は補助線を消す */
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
     .tile.matched, .tile.traced, .tile.trace-start {
@@ -418,10 +437,10 @@
       <div class="tool">
         <h3>Legend (screen only)</h3>
         <div class="legend">
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--tl);"></span>① Numbers only</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--tr);"></span>② Numbers + lowercase</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--bl);"></span>③ Numbers + upper & lowercase</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--br);"></span>④ Numbers + upper/lower + symbols</div>
+          <div class="legend-item"><span class="legend-icon tl-icon"></span>① Numbers only (top-left)</div>
+          <div class="legend-item"><span class="legend-icon tr-icon"></span>② Numbers + lowercase (top-right)</div>
+          <div class="legend-item"><span class="legend-icon bl-icon"></span>③ Numbers + upper & lowercase (bottom-left)</div>
+          <div class="legend-item"><span class="legend-icon br-icon"></span>④ Numbers + upper/lower + symbols (bottom-right)</div>
         </div>
       </div>
     </div>
