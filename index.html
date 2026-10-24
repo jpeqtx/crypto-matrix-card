@@ -25,28 +25,18 @@
     --radius: 10px;
     --radius-sm: 5px;
   }
-
   * { box-sizing: border-box; }
-
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.5;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-
   .app { max-width: 980px; margin: 0 auto; padding: 32px 20px 60px; }
-
   header {
-    margin-bottom: 24px;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+    margin-bottom: 24px; display: flex; align-items: baseline;
+    justify-content: space-between; gap: 16px; flex-wrap: wrap;
   }
   h1 {
     font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0;
@@ -55,16 +45,15 @@
   }
   .subtitle { color: var(--text-secondary); font-size: 14px; margin: 4px 0 0; }
   .version { color: var(--text-muted); font-size: 12px; font-family: ui-monospace, monospace; }
-
   .panel {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 20px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 20px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.03);
   }
-
+  .section-title {
+    font-size: 12px; margin: 0 0 10px; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+  }
   .controls { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
   .field { flex: 1 1 240px; min-width: 180px; }
   .field label {
@@ -72,121 +61,73 @@
     margin-bottom: 6px; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.06em;
   }
-
   input[type="text"] {
-    width: 100%; padding: 10px 12px;
-    background: var(--card);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 14px;
+    width: 100%; padding: 10px 12px; background: var(--card);
+    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    color: var(--text); font-family: ui-monospace, monospace; font-size: 14px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   input:focus {
-    outline: none;
-    border-color: var(--accent);
+    outline: none; border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-muted);
   }
-
   .btn {
-    padding: 10px 16px;
-    background: var(--card);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: all 0.15s;
-    white-space: nowrap; font-family: inherit;
+    padding: 10px 16px; background: var(--card);
+    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    color: var(--text); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit;
   }
   .btn:hover { background: var(--bg-subtle); border-color: var(--accent); }
   .btn:active { transform: translateY(1px); }
   .btn:disabled { opacity: 0.5; cursor: wait; }
   .btn.primary {
-    background: var(--accent); color: #ffffff;
+    background: var(--accent); color: #fff;
     border-color: var(--accent); font-weight: 600;
   }
   .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
-  /* Toggle switch */
   .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    font-size: 13px;
-    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 10px; margin-top: 14px;
+    padding-top: 14px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text-secondary);
   }
-  .toggle {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 22px;
-    flex-shrink: 0;
-  }
+  .toggle { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; }
   .toggle .slider {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    background: var(--border-strong);
-    border-radius: 22px;
-    transition: background 0.2s;
+    position: absolute; inset: 0; cursor: pointer;
+    background: var(--border-strong); border-radius: 22px; transition: background 0.2s;
   }
   .toggle .slider::before {
-    content: '';
-    position: absolute;
-    width: 16px; height: 16px;
-    left: 3px; top: 3px;
-    background: #fff;
-    border-radius: 50%;
-    transition: transform 0.2s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    content: ''; position: absolute; width: 16px; height: 16px;
+    left: 3px; top: 3px; background: #fff; border-radius: 50%;
+    transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
   .toggle input:checked + .slider { background: var(--accent); }
   .toggle input:checked + .slider::before { transform: translateX(18px); }
 
-  /* Card scene */
-  .card-scene {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
+  .card-scene { display: flex; justify-content: center; margin-bottom: 20px; }
   .card {
-    width: 100%;
-    max-width: 600px;
-    aspect-ratio: 85.6 / 53.98;   /* ISO/IEC 7810 ID-1 (credit card) */
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
+    width: 100%; max-width: 600px; aspect-ratio: 85.6 / 53.98;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column;
-    transition: opacity 0.15s;
+    display: flex; flex-direction: column; transition: opacity 0.15s;
   }
   .card.loading { opacity: 0.45; }
-
   .matrix {
-    flex: 1 1 auto;
-    display: grid;
+    flex: 1 1 auto; display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    gap: 4px;
-    margin-bottom: 8px;
-    min-height: 0;
+    gap: 4px; margin-bottom: 8px; min-height: 0;
   }
-
   .tile {
-    position: relative;
-    background: #fff;
-    border: 1px solid #c7c5c4;
-    border-radius: 2px;
-    display: flex; align-items: center; justify-content: center;
+    position: relative; background: #fff; border: 1px solid #c7c5c4;
+    border-radius: 2px; display: flex; align-items: center; justify-content: center;
     container-type: size;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    touch-action: none;
+    user-select: none;
+    cursor: pointer;
   }
   .tile:hover {
     border-color: var(--accent);
@@ -194,13 +135,12 @@
     z-index: 1;
   }
   .tile .center {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-weight: 700; color: var(--text);
-    line-height: 1; font-size: 58cqmin;
+    font-family: ui-monospace, monospace; font-weight: 700;
+    color: var(--text-muted); line-height: 1; font-size: 24cqmin;
+    opacity: 0.55;
   }
   .tile .corner {
-    position: absolute;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    position: absolute; font-family: ui-monospace, monospace;
     font-weight: 600; line-height: 1; font-size: 28cqmin;
   }
   .tile .tl { top: 6%; left: 8%; color: var(--tl); }
@@ -212,49 +152,67 @@
     background: rgba(14, 116, 144, 0.06);
     box-shadow: 0 0 0 2px var(--accent-muted);
   }
+  .tile.traced {
+    border-color: var(--accent) !important;
+    background: rgba(14, 116, 144, 0.14) !important;
+    box-shadow: 0 0 0 2px var(--accent-muted) !important;
+    z-index: 2;
+  }
+  .tile.trace-start {
+    background: rgba(14, 116, 144, 0.26) !important;
+  }
 
   .card-info {
-    flex: 0 0 auto;
-    padding-top: 6px;
+    flex: 0 0 auto; padding-top: 6px;
     border-top: 1px solid var(--border-strong);
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 11px;
-    color: var(--text-secondary);
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 0;
+    font-family: ui-monospace, monospace; font-size: 11px;
+    color: var(--text-secondary); line-height: 1.4;
+    letter-spacing: 0.04em; display: flex; flex-direction: column;
+    justify-content: center; min-height: 0;
   }
   .card-info .row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: center;
+    display: flex; justify-content: space-between; gap: 12px; align-items: center;
   }
   .card-info .seed {
-    font-weight: 700;
-    color: var(--text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 60%;
+    font-weight: 700; color: var(--text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%;
   }
-  .card-info .datetime {
-    color: var(--text-muted);
-    white-space: nowrap;
+  .card-info .datetime { color: var(--text-muted); white-space: nowrap; }
+
+  /* Password generator */
+  .pattern-select { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pattern-btn {
+    padding: 8px 14px; border: 1px solid var(--border-strong);
+    background: var(--card); color: var(--text-secondary);
+    border-radius: var(--radius-sm); cursor: pointer;
+    font-size: 13px; font-family: inherit; transition: all 0.15s;
   }
+  .pattern-btn:hover { background: var(--bg-subtle); border-color: var(--accent); }
+  .pattern-btn.active {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .password-result {
+    font-family: ui-monospace, monospace; font-size: 18px; font-weight: 700;
+    color: var(--text); letter-spacing: 0.05em;
+    padding: 12px 16px; background: var(--bg-subtle);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    min-height: 52px; word-break: break-all;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .password-result .value { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+  .password-result .placeholder {
+    color: var(--text-muted); font-weight: 400;
+    font-size: 13px; letter-spacing: 0;
+  }
+  .password-result .btn { padding: 6px 12px; font-size: 12px; }
+  .trace-hint { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
 
   .tools { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   @media (max-width: 640px) { .tools { grid-template-columns: 1fr; } }
-
   .tool h3 {
-    font-size: 12px; margin: 0 0 10px;
-    color: var(--text-secondary);
+    font-size: 12px; margin: 0 0 10px; color: var(--text-secondary);
     text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
   }
-
   .lookup-result {
     margin-top: 12px; font-size: 13px;
     color: var(--text-secondary); min-height: 20px; line-height: 1.8;
@@ -262,11 +220,9 @@
   .lookup-result .hit {
     display: inline-block; padding: 2px 8px;
     border-radius: var(--radius-sm); margin: 2px 4px 2px 0;
-    font-family: ui-monospace, monospace;
-    font-size: 12px;
+    font-family: ui-monospace, monospace; font-size: 12px;
     background: var(--accent-muted); color: var(--accent-hover);
   }
-
   .legend { display: grid; gap: 8px; }
   .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
   .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
@@ -277,10 +233,9 @@
   .toast {
     position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--text); color: #ffffff;
+    background: var(--text); color: #fff;
     padding: 10px 22px; border-radius: 999px;
-    font-size: 13px; font-weight: 600;
-    opacity: 0;
+    font-size: 13px; font-weight: 600; opacity: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none; z-index: 100;
   }
@@ -288,89 +243,48 @@
 
   footer { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 32px; }
   footer .copyright {
-    margin-top: 6px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--text-secondary);
-    font-family: ui-monospace, monospace;
+    margin-top: 6px; font-size: 11px; letter-spacing: 0.08em;
+    color: var(--text-secondary); font-family: ui-monospace, monospace;
   }
 
-  /* ==========================================================
-     Print: クレジットカード原寸 85.6 × 53.98mm
-     ========================================================== */
   @media print {
     @page { margin: 5mm; size: auto; }
-
-    /* 画面表示用の余白・高さをリセット（2ページ目防止） */
     html, body {
-      margin: 0 !important;
-      padding: 0 !important;
-      min-height: auto !important;
-      height: auto !important;
-      background: #fff !important;
-      color: #000 !important;
+      margin: 0 !important; padding: 0 !important;
+      min-height: auto !important; height: auto !important;
+      background: #fff !important; color: #000 !important;
     }
     .app {
-      padding: 0 !important;
-      margin: 0 !important;
-      max-width: none !important;
-      min-height: auto !important;
+      padding: 0 !important; margin: 0 !important;
+      max-width: none !important; min-height: auto !important;
     }
     .card-scene {
-      margin: 0 !important;
-      padding: 0 !important;
-      display: block !important;
-      height: auto !important;
+      margin: 0 !important; padding: 0 !important;
+      display: block !important; height: auto !important;
     }
-
-    /* カード以外の要素を完全に非表示 */
-    .panel, .tools, footer, header, .actions, .toast, .controls, .toggle-row {
+    .panel, .tools, footer, header, .actions, .toast, .controls, .toggle-row, .password-gen {
       display: none !important;
     }
-
-    /* カード本体 */
     .card {
-      width: 85.6mm;
-      height: 53.98mm;
-      max-width: none;
-      margin: 0 !important;
-      background: #fff;
-      border: 0.25mm solid #000;
-      border-radius: 2mm;
-      padding: 1.2mm;
-      box-shadow: none;
-      display: flex;
-      flex-direction: column;
-
-      /* 改ページ防止 */
-      break-inside: avoid;
-      page-break-inside: avoid;
-      page-break-after: avoid;
+      width: 85.6mm; height: 53.98mm; max-width: none; margin: 0 !important;
+      background: #fff; border: 0.25mm solid #000; border-radius: 2mm;
+      padding: 1.2mm; box-shadow: none; display: flex; flex-direction: column;
+      break-inside: avoid; page-break-inside: avoid; page-break-after: avoid;
     }
-
-    .matrix {
-      flex: 0 0 auto;
-      height: 44.98mm;
-      gap: 0.8mm;
-      margin-bottom: 1mm;
-    }
+    .matrix { flex: 0 0 auto; height: 44.98mm; gap: 0.8mm; margin-bottom: 1mm; }
     .tile {
-      background: #fff;
-      border: 0.2mm solid #000;
-      border-radius: 0;
+      background: #fff; border: 0.2mm solid #000;
+      border-radius: 0; box-shadow: none !important;
+    }
+    .tile .center { color: #888; font-weight: 700; font-size: 3mm; opacity: 1; }
+    .tile .corner { color: #000 !important; font-weight: 600; font-size: 2.4mm; }
+    .tile.matched, .tile.traced, .tile.trace-start {
+      background: #fff !important; border-color: #000 !important;
       box-shadow: none !important;
     }
-    .tile .center { color: #000; font-weight: 700; font-size: 4.5mm; }
-    .tile .corner { color: #000 !important; font-weight: 600; font-size: 2.4mm; }
-    .tile.matched { background: #fff; border-color: #000; box-shadow: none !important; }
-
     .card-info {
-      flex: 1 1 auto;
-      padding-top: 0.8mm;
-      border-top: 0.2mm solid #000;
-      font-size: 2.2mm;
-      line-height: 1.35;
-      letter-spacing: 0.05em;
+      flex: 1 1 auto; padding-top: 0.8mm; border-top: 0.2mm solid #000;
+      font-size: 2.2mm; line-height: 1.35; letter-spacing: 0.05em;
       justify-content: center;
     }
     .card-info .seed { color: #000; max-width: 62%; }
@@ -385,7 +299,7 @@
       <h1>Crypto Matrix</h1>
       <p class="subtitle">Deterministic codebook generator</p>
     </div>
-    <span class="version">v3.0 · card</span>
+    <span class="version">v4.0 · passcard-mode</span>
   </header>
 
   <section class="panel">
@@ -419,6 +333,21 @@
     </div>
   </div>
 
+  <section class="panel password-gen">
+    <h3 class="section-title">Password Generator</h3>
+    <div class="pattern-select" id="pattern-select">
+      <button class="pattern-btn active" data-pattern="1">① 数字のみ</button>
+      <button class="pattern-btn" data-pattern="2">② 数字 + 小文字</button>
+      <button class="pattern-btn" data-pattern="3">③ 数字 + 大小文字</button>
+      <button class="pattern-btn" data-pattern="4">④ 数字 + 大小文字 + 記号</button>
+    </div>
+    <div class="password-result" id="password-result">
+      <span class="value placeholder">タイルをドラッグして経路をなぞってください</span>
+      <button class="btn" id="btn-clear-pw">Clear</button>
+    </div>
+    <div class="trace-hint">💡 なぞった経路上の文字が、選択中のパターンで連結されます。経路を変えれば無限に生成できます。</div>
+  </section>
+
   <section class="panel">
     <div class="tools">
       <div class="tool">
@@ -429,21 +358,21 @@
       <div class="tool">
         <h3>Legend (screen only)</h3>
         <div class="legend">
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--tl);"></span>Top-left · digits</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--tr);"></span>Top-right · alphanum</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--bl);"></span>Bottom-left · alphanum + symbols</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--br);"></span>Bottom-right · correspondence</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--tl);"></span>① 数字のみ</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--tr);"></span>② 数字 + 小文字</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--bl);"></span>③ 数字 + 大小文字</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--br);"></span>④ 数字 + 大小文字 + 記号</div>
         </div>
       </div>
     </div>
     <div class="actions">
       <button class="btn" id="btn-print">Print / Save PDF</button>
-      <span class="hint">クレジットカード原寸 85.6 × 53.98mm ／ 暗号：PBKDF2-SHA256 (200,000 反復)</span>
+      <span class="hint">クレカ原寸 85.6 × 53.98mm ／ PBKDF2-SHA256 (200,000 反復)</span>
     </div>
   </section>
 
   <footer>
-    <div>PBKDF2-SHA256 · 40 tiles · 5 character positions each</div>
+    <div>PBKDF2-SHA256 · 40 tiles · 4 password patterns</div>
     <div class="copyright">2026 YNGMT</div>
   </footer>
 </div>
@@ -464,45 +393,34 @@
 (function () {
   'use strict';
 
-  /* ==========================================================
-     Configuration
-     ========================================================== */
-  const MAX_TILE_COUNT   = 40;
+  const MAX_TILE_COUNT    = 40;
   const PBKDF2_ITERATIONS = 200000;
-  const PBKDF2_SALT      = 'crypto-matrix-v3';
-  const STREAM_BYTES     = 2048;   // 全シャッフルで使う乱数ストリーム長
+  const PBKDF2_SALT       = 'crypto-matrix-v4';
+  const STREAM_BYTES      = 2048;
 
-  /* ==========================================================
-     Cryptographic seed derivation
-     PBKDF2-SHA256 (200k iterations) → 256-bit key
-     → SHA-256 counter mode → byte stream
-     ========================================================== */
+  /* ---------- Character sets ---------- */
+  const digits  = Array.from({ length: 10 }, (_, i) => String(i));
+  const lower   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
+  const upper   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+  const symbols = ['-', '_', '!', '#', '$', '%', '&', '^', '(', ')', '+', '*', '/'];
+
+  /* ---------- PBKDF2 → SHA-256 counter mode ---------- */
   async function deriveStream(seedStr, totalBytes) {
     const enc = new TextEncoder();
-
-    // 1) PBKDF2: 任意長シード → 256bit鍵 (200,000反復)
     const keyMaterial = await crypto.subtle.importKey(
       'raw', enc.encode(seedStr), 'PBKDF2', false, ['deriveBits']
     );
     const keyBits = await crypto.subtle.deriveBits(
-      {
-        name: 'PBKDF2',
-        salt: enc.encode(PBKDF2_SALT),
-        iterations: PBKDF2_ITERATIONS,
-        hash: 'SHA-256'
-      },
-      keyMaterial,
-      256
+      { name: 'PBKDF2', salt: enc.encode(PBKDF2_SALT),
+        iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+      keyMaterial, 256
     );
     const key = new Uint8Array(keyBits);
-
-    // 2) SHA-256 counter mode で拡張 (key || counter)
     const blocks = Math.ceil(totalBytes / 32);
     const out = new Uint8Array(blocks * 32);
-    const inputBuf = new Uint8Array(32 + 4);  // key(32) + counter(4)
+    const inputBuf = new Uint8Array(32 + 4);
     inputBuf.set(key, 0);
     const dv = new DataView(inputBuf.buffer);
-
     for (let i = 0; i < blocks; i++) {
       dv.setUint32(32, i, false);
       const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', inputBuf));
@@ -511,13 +429,8 @@
     return out.slice(0, totalBytes);
   }
 
-  /* ==========================================================
-     Synchronous PRNG backed by pre-derived bytes
-     ========================================================== */
-  function BytePRNG(bytes) {
-    this.bytes = bytes;
-    this.pos = 0;
-  }
+  /* ---------- PRNG ---------- */
+  function BytePRNG(bytes) { this.bytes = bytes; this.pos = 0; }
   BytePRNG.prototype.nextUint32 = function () {
     if (this.pos + 4 > this.bytes.length) this.pos = 0;
     const b = this.bytes, p = this.pos;
@@ -525,13 +438,8 @@
     this.pos += 4;
     return v >>> 0;
   };
-  BytePRNG.prototype.rand = function () {
-    return this.nextUint32() / 4294967296;
-  };
+  BytePRNG.prototype.rand = function () { return this.nextUint32() / 4294967296; };
 
-  /* ==========================================================
-     Helpers
-     ========================================================== */
   function shuffle(arr, prng) {
     const r = arr.slice();
     for (let i = r.length - 1; i > 0; i--) {
@@ -545,108 +453,158 @@
     for (let i = 0; i < n; i++) out.push(...arr);
     return out;
   }
-
-  /* ==========================================================
-     Character sets
-     ========================================================== */
-  const digits  = Array.from({ length: 10 }, (_, i) => String(i));
-  const lower   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
-  const upper   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
-  const symbols = ['-', '_', '!', '#', '$', '%', '&', '^', '(', ')', '+', '*', '/'];
-
-  /* ==========================================================
-     Value generation (deterministic for given seed)
-     ========================================================== */
   function fillToMax(chars) {
     return repeatArray(chars, Math.ceil(MAX_TILE_COUNT / chars.length));
   }
-  function createValues(prng) {
-    const symbol4 = shuffle(symbols, prng).slice(0, 4);
-    const roots = [...digits, ...lower, ...symbol4];
 
-    const numbers    = shuffle(fillToMax(digits), prng);
-    const alnum      = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);
-    const alnumSym   = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng);
-    const correspond = shuffle(roots, prng);
+  /* ---------- Value generation (4 patterns) ---------- */
+  function createValues(prng) {
+    const p1 = shuffle(fillToMax(digits), prng);                                  // ① 数字
+    const p2 = shuffle(fillToMax([...digits, ...lower]), prng);                    // ② + 小文字
+    const p3 = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);          // ③ + 大文字
+    const p4 = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng); // ④ + 記号
 
     const items = [];
     for (let i = 0; i < MAX_TILE_COUNT; i++) {
       items.push({
-        center: roots[i],
-        tl: numbers[i],
-        tr: alnum[i],
-        bl: alnumSym[i],
-        br: correspond[i]
+        index: String(i).padStart(2, '0'),
+        p1: p1[i],
+        p2: p2[i],
+        p3: p3[i],
+        p4: p4[i]
       });
     }
     return items;
   }
 
-  /* ==========================================================
-     DOM refs
-     ========================================================== */
-  const cardEl       = document.getElementById('card');
-  const matrixEl     = document.getElementById('matrix');
-  const seedInput    = document.getElementById('seed-input');
-  const lookupInput  = document.getElementById('lookup-input');
-  const lookupResult = document.getElementById('lookup-result');
-  const tileTpl      = document.getElementById('tile-template');
-  const toastEl      = document.getElementById('toast');
-  const toggleSeed   = document.getElementById('toggle-seed');
-  const cardSeedEl   = document.getElementById('card-seed');
-  const cardDtEl     = document.getElementById('card-datetime');
-  const btnGenerate  = document.getElementById('btn-generate');
-  const btnRandom    = document.getElementById('btn-random');
-  const btnCopy      = document.getElementById('btn-copy');
-  const btnPrint     = document.getElementById('btn-print');
+  /* ---------- DOM ---------- */
+  const cardEl        = document.getElementById('card');
+  const matrixEl      = document.getElementById('matrix');
+  const seedInput     = document.getElementById('seed-input');
+  const lookupInput   = document.getElementById('lookup-input');
+  const lookupResult  = document.getElementById('lookup-result');
+  const tileTpl       = document.getElementById('tile-template');
+  const toastEl       = document.getElementById('toast');
+  const toggleSeed    = document.getElementById('toggle-seed');
+  const cardSeedEl    = document.getElementById('card-seed');
+  const cardDtEl      = document.getElementById('card-datetime');
+  const btnGenerate   = document.getElementById('btn-generate');
+  const btnRandom     = document.getElementById('btn-random');
+  const btnCopy       = document.getElementById('btn-copy');
+  const btnPrint      = document.getElementById('btn-print');
+  const patternSelect = document.getElementById('pattern-select');
+  const passwordResEl = document.getElementById('password-result');
+  const btnClearPw    = document.getElementById('btn-clear-pw');
 
-  let currentData  = [];
-  let currentTiles = [];
-  let currentSeed  = '0';
-  let issuedAt     = new Date();
+  let currentData   = [];
+  let currentTiles  = [];
+  let currentSeed   = '0';
+  let issuedAt      = new Date();
+  let currentPattern = 1;
+  let tracing       = false;
+  let traceIndices  = [];
 
-  /* ==========================================================
-     Render matrix
-     ========================================================== */
+  /* ---------- Render ---------- */
   function render() {
     matrixEl.innerHTML = '';
     currentTiles = [];
     const frag = document.createDocumentFragment();
-    currentData.forEach(v => {
+    currentData.forEach((v, i) => {
       const clone = tileTpl.content.cloneNode(true);
       const tile = clone.querySelector('.tile');
-      tile.querySelector('.center').textContent = v.center;
-      tile.querySelector('.tl').textContent = v.tl;
-      tile.querySelector('.tr').textContent = v.tr;
-      tile.querySelector('.bl').textContent = v.bl;
-      tile.querySelector('.br').textContent = v.br;
+      tile.dataset.index = String(i);
+      tile.querySelector('.center').textContent = v.index;
+      tile.querySelector('.tl').textContent = v.p1;
+      tile.querySelector('.tr').textContent = v.p2;
+      tile.querySelector('.bl').textContent = v.p3;
+      tile.querySelector('.br').textContent = v.p4;
       frag.appendChild(clone);
       currentTiles.push(tile);
     });
     matrixEl.appendChild(frag);
   }
 
-  /* ==========================================================
-     Card footer (seed + issued datetime)
-     ========================================================== */
+  /* ---------- Card footer ---------- */
   function formatDateTime(d) {
     const pad = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
            `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
   function updateCardInfo() {
-    if (toggleSeed.checked) {
-      cardSeedEl.textContent = 'SEED: ' + currentSeed;
-    } else {
-      cardSeedEl.textContent = 'SEED: ********';
-    }
-    // 発行年月日時刻はトグルに関係なく常に表示
+    cardSeedEl.textContent = toggleSeed.checked
+      ? 'SEED: ' + currentSeed
+      : 'SEED: ********';
     cardDtEl.textContent = formatDateTime(issuedAt);
   }
 
-  /* ==========================================================
-     Regenerate (async: PBKDF2)
-     ========================================================== */
+  /* ---------- Password generation ---------- */
+  function getPatternChar(idx) {
+    const v = currentData[idx];
+    if (!v) return '';
+    return v['p' + currentPattern] || '';
+  }
+  function updatePasswordDisplay() {
+    const valueEl = passwordResEl.querySelector('.value');
+    if (traceIndices.length === 0) {
+      valueEl.innerHTML = '<span class="placeholder">タイルをドラッグして経路をなぞってください</span>';
+      return;
+    }
+    valueEl.textContent = traceIndices.map(getPatternChar).join('');
+  }
+  function clearTrace() {
+    traceIndices = [];
+    currentTiles.forEach(t => t.classList.remove('traced', 'trace-start'));
+    updatePasswordDisplay();
+  }
+  function addTileToTrace(tile) {
+    const idx = parseInt(tile.dataset.index, 10);
+    if (traceIndices[traceIndices.length - 1] === idx) return;
+    traceIndices.push(idx);
+    if (traceIndices.length === 1) tile.classList.add('trace-start');
+    tile.classList.add('traced');
+    updatePasswordDisplay();
+  }
+  function clearLookupHighlights() {
+    currentTiles.forEach(t => t.classList.remove('matched'));
+    lookupInput.value = '';
+    lookupResult.innerHTML = '';
+  }
+
+  /* ---------- Trace events ---------- */
+  matrixEl.addEventListener('pointerdown', e => {
+    const tile = e.target.closest('.tile');
+    if (!tile) return;
+    e.preventDefault();
+    clearLookupHighlights();
+    clearTrace();
+    tracing = true;
+    addTileToTrace(tile);
+    try { matrixEl.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  matrixEl.addEventListener('pointermove', e => {
+    if (!tracing) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    if (!el) return;
+    const tile = el.closest('.tile');
+    if (!tile || !matrixEl.contains(tile)) return;
+    addTileToTrace(tile);
+  });
+  document.addEventListener('pointerup', () => { tracing = false; });
+  document.addEventListener('pointercancel', () => { tracing = false; });
+
+  /* ---------- Pattern switch ---------- */
+  patternSelect.addEventListener('click', e => {
+    const btn = e.target.closest('.pattern-btn');
+    if (!btn) return;
+    patternSelect.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPattern = parseInt(btn.dataset.pattern, 10);
+    updatePasswordDisplay();
+  });
+
+  btnClearPw.addEventListener('click', clearTrace);
+
+  /* ---------- Regenerate ---------- */
   async function regenerate(seedStr, newIssue) {
     currentSeed = String(seedStr);
     if (newIssue) issuedAt = new Date();
@@ -661,8 +619,9 @@
       const prng = new BytePRNG(bytes);
       currentData = createValues(prng);
       render();
+      clearTrace();
+      clearLookupHighlights();
       updateCardInfo();
-      applyLookup(lookupInput.value.trim().slice(0, 1));
     } catch (err) {
       console.error(err);
       toast('生成に失敗しました');
@@ -674,28 +633,24 @@
     }
   }
 
-  /* ==========================================================
-     Lookup
-     ========================================================== */
+  /* ---------- Lookup ---------- */
   function applyLookup(ch) {
+    clearTrace();
     currentTiles.forEach(t => t.classList.remove('matched'));
     lookupResult.innerHTML = '';
     if (!ch) return;
-
     const hits = [];
     currentData.forEach((v, i) => {
       const pos = [];
-      if (v.center === ch) pos.push('center');
-      if (v.tl === ch)     pos.push('top-left');
-      if (v.tr === ch)     pos.push('top-right');
-      if (v.bl === ch)     pos.push('bottom-left');
-      if (v.br === ch)     pos.push('bottom-right');
+      if (v.p1 === ch) pos.push('①');
+      if (v.p2 === ch) pos.push('②');
+      if (v.p3 === ch) pos.push('③');
+      if (v.p4 === ch) pos.push('④');
       if (pos.length) {
         currentTiles[i].classList.add('matched');
-        hits.push(`#${String(i + 1).padStart(2, '0')} ${pos.join('/')}`);
+        hits.push(`#${v.index} ${pos.join('')}`);
       }
     });
-
     if (hits.length === 0) {
       lookupResult.textContent = `"${ch}" not found.`;
     } else {
@@ -707,9 +662,7 @@
     }
   }
 
-  /* ==========================================================
-     Utils
-     ========================================================== */
+  /* ---------- Utils ---------- */
   function toast(msg) {
     toastEl.textContent = msg;
     toastEl.classList.add('show');
@@ -717,28 +670,23 @@
     toast._t = setTimeout(() => toastEl.classList.remove('show'), 1600);
   }
   function generateStrongSeed() {
-    // 64-bit hex seed
     const buf = new Uint8Array(8);
     crypto.getRandomValues(buf);
     return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  /* ==========================================================
-     Events
-     ========================================================== */
+  /* ---------- Events ---------- */
   btnGenerate.addEventListener('click', () => {
     const s = seedInput.value.trim();
     if (!s) { toast('シードを入力してください'); return; }
     regenerate(s, true);
   });
-
   btnRandom.addEventListener('click', () => {
     const s = generateStrongSeed();
     seedInput.value = s;
     regenerate(s, true);
     toast('Seed: ' + s);
   });
-
   btnCopy.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(currentSeed);
@@ -749,22 +697,16 @@
       toast('Seed copied');
     }
   });
-
   btnPrint.addEventListener('click', () => window.print());
-
   toggleSeed.addEventListener('change', updateCardInfo);
-
   lookupInput.addEventListener('input', () => {
     applyLookup(lookupInput.value.trim().slice(0, 1));
   });
-
   seedInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') btnGenerate.click();
   });
 
-  /* ==========================================================
-     Init
-     ========================================================== */
+  /* ---------- Init ---------- */
   regenerate('0', true);
 })();
 </script>
