@@ -380,7 +380,7 @@
 
   <footer>
     <div>PBKDF2-SHA256 · 40 tiles · 4 password patterns</div>
-    <div class="version-footer">Ver.4.0</div>
+    <div class="version-footer">Ver.4.1</div>
     <div class="copyright">2026 YNGMT</div>
   </footer>
 </div>
@@ -468,10 +468,15 @@
     const p3 = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);
     const p4 = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng);
 
+    // 中央用の文字プール: 数字(10) + 小文字(26) + ランダムな記号(4) = 40文字
+    const randomSymbols = shuffle(symbols, prng).slice(0, 4);
+    const centerPool = [...digits, ...lower, ...randomSymbols];
+    const centerChars = shuffle(centerPool, prng);
+
     const items = [];
     for (let i = 0; i < MAX_TILE_COUNT; i++) {
       items.push({
-        index: String(i).padStart(2, '0'),
+        index: centerChars[i],
         p1: p1[i],
         p2: p2[i],
         p3: p3[i],
@@ -515,7 +520,10 @@
     currentData.forEach((v, i) => {
       const clone = tileTpl.content.cloneNode(true);
       const tile = clone.querySelector('.tile');
+      // 内部的なタイル番号を data-index として保持
       tile.dataset.index = String(i);
+      tile.setAttribute('title', `Tile #${String(i).padStart(2, '0')}`);
+      
       tile.querySelector('.center').textContent = v.index;
       tile.querySelector('.tl').textContent = v.p1;
       tile.querySelector('.tr').textContent = v.p2;
@@ -642,13 +650,14 @@
     const hits = [];
     currentData.forEach((v, i) => {
       const pos = [];
+      if (v.index === ch) pos.push('center'); // 中央も検索対象に追加
       if (v.p1 === ch) pos.push('①');
       if (v.p2 === ch) pos.push('②');
       if (v.p3 === ch) pos.push('③');
       if (v.p4 === ch) pos.push('④');
       if (pos.length) {
         currentTiles[i].classList.add('matched');
-        hits.push(`#${v.index} ${pos.join('')}`);
+        hits.push(`#${String(i).padStart(2, '0')} ${pos.join('')}`);
       }
     });
     if (hits.length === 0) {
