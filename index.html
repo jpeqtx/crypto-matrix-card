@@ -315,7 +315,6 @@
     }
     .tile .corner {
       color: #000 !important; font-weight: 600; font-size: 2.4mm;
-      border-bottom: none !important;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
     .tile.matched, .tile.traced, .tile.trace-start {
@@ -619,6 +618,9 @@
   let tracing       = false;
   let dragDetected  = false;
   let pointerdownIndex = -1;
+  let startX = 0;
+  let startY = 0;
+  const DRAG_THRESHOLD = 6;
   let traceIndices  = [];
 
   function render() {
@@ -709,6 +711,8 @@
     e.preventDefault();
     clearLookupHighlights();
     pointerdownIndex = parseInt(tile.dataset.index, 10);
+    startX = e.clientX;
+    startY = e.clientY;
     dragDetected = false;
     tracing = true;
     try { matrixEl.setPointerCapture(e.pointerId); } catch (_) {}
@@ -717,7 +721,11 @@
   matrixEl.addEventListener('pointermove', e => {
     if (!tracing) return;
     if (!dragDetected) {
-      // 最初の移動を検知したらドラッグ開始。新しいパスとしてクリアし、開始タイルを追加
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.sqrt(dx * dx + dy * dy) < DRAG_THRESHOLD) {
+        return;
+      }
       dragDetected = true;
       clearTrace();
       addTileToTrace(currentTiles[pointerdownIndex]);
@@ -732,7 +740,6 @@
   document.addEventListener('pointerup', () => {
     if (!tracing) return;
     if (!dragDetected && pointerdownIndex >= 0) {
-      // クリック判定: タイルをトグル
       toggleTile(pointerdownIndex);
     }
     tracing = false;
