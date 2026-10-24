@@ -254,8 +254,11 @@
     color: var(--text-secondary); font-family: ui-monospace, monospace;
   }
 
+  /* Print-only quick reference */
+  .print-reference { display: none; }
+
   @media print {
-    @page { margin: 5mm; size: auto; }
+    @page { size: A4; margin: 5mm; }
     html, body {
       margin: 0 !important; padding: 0 !important;
       min-height: auto !important; height: auto !important;
@@ -267,15 +270,18 @@
     }
     .card-scene {
       margin: 0 !important; padding: 0 !important;
-      display: block !important; height: auto !important;
+      display: flex !important; justify-content: center !important;
+      height: auto !important;
     }
     .panel, .tools, footer, header, .actions, .toast, .controls, .toggle-row, .password-gen {
       display: none !important;
     }
     .card {
-      width: 85.6mm; height: 53.98mm; max-width: none; margin: 0 !important;
-      background: #fff; border: 0.25mm solid #000; border-radius: 2mm;
-      padding: 1.2mm; box-shadow: none; display: flex; flex-direction: column;
+      width: 85.6mm; height: 53.98mm; max-width: none;
+      margin: 0 !important; background: #fff;
+      border: 0.25mm solid #000; border-radius: 2mm;
+      padding: 1.2mm; box-shadow: none;
+      display: flex; flex-direction: column;
       break-inside: avoid; page-break-inside: avoid; page-break-after: avoid;
     }
     .matrix { flex: 0 0 auto; height: 44.98mm; gap: 0.8mm; margin-bottom: 1mm; }
@@ -283,8 +289,15 @@
       background: #fff; border: 0.2mm solid #000;
       border-radius: 0; box-shadow: none !important;
     }
-    .tile .center { color: #000; font-weight: 700; font-size: 4.2mm; opacity: 1; }
-    .tile .corner { color: #000 !important; font-weight: 600; font-size: 2.4mm; }
+    .tile .center {
+      color: #000; font-weight: 700; font-size: 4.2mm; opacity: 1;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    /* 四隅はすべて黒で印刷 */
+    .tile .corner {
+      color: #000 !important; font-weight: 600; font-size: 2.4mm;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
     .tile.matched, .tile.traced, .tile.trace-start {
       background: #fff !important; border-color: #000 !important;
       box-shadow: none !important;
@@ -296,6 +309,46 @@
     }
     .card-info .seed { color: #000; max-width: 62%; }
     .card-info .datetime { color: #000; }
+
+    /* Quick reference */
+    .print-reference {
+      display: block;
+      margin: 8mm auto 0;
+      max-width: 180mm;
+      color: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+      font-size: 9pt; line-height: 1.45;
+    }
+    .print-reference h2 {
+      font-size: 13pt; margin: 0 0 3mm; padding-bottom: 1.5mm;
+      border-bottom: 0.4mm solid #000; text-align: center;
+    }
+    .print-reference h3 {
+      font-size: 10pt; margin: 3mm 0 1.5mm; padding-bottom: 0.8mm;
+      border-bottom: 0.2mm solid #999;
+    }
+    .print-reference table {
+      border-collapse: collapse; width: 100%; font-size: 8.5pt;
+    }
+    .print-reference th, .print-reference td {
+      padding: 1.2mm 2mm; border: 0.2mm solid #000;
+      vertical-align: top; text-align: left;
+    }
+    .print-reference td:first-child {
+      width: 10mm; text-align: center; font-weight: 700;
+    }
+    .print-reference td:nth-child(2) {
+      width: 30mm; font-weight: 600;
+    }
+    .print-reference code {
+      font-family: ui-monospace, monospace; background: #f0f0f0;
+      padding: 0 1mm; border-radius: 0.5mm; font-size: 8pt;
+    }
+    .print-reference ol, .print-reference ul {
+      margin: 0; padding-left: 5mm;
+    }
+    .print-reference li { margin-bottom: 0.8mm; }
+    .ref-grid { display: grid; grid-template-columns: 1fr; gap: 2mm; }
   }
 </style>
 </head>
@@ -375,6 +428,41 @@
     <div class="actions">
       <button class="btn" id="btn-print">Print / Save PDF</button>
       <span class="hint">Credit card size 85.6 × 53.98mm / PBKDF2-SHA256 (200,000 iterations)</span>
+    </div>
+  </section>
+
+  <section class="print-reference">
+    <h2>Crypto Matrix Card — Quick Reference</h2>
+    <div class="ref-grid">
+      <div class="ref-block">
+        <h3>Password patterns</h3>
+        <table>
+          <tbody>
+            <tr><td>①</td><td>Top-left</td><td>Numbers only <code>0-9</code></td></tr>
+            <tr><td>②</td><td>Top-right</td><td>Numbers + lowercase <code>0-9a-z</code></td></tr>
+            <tr><td>③</td><td>Bottom-left</td><td>Numbers + upper &amp; lowercase <code>0-9a-zA-Z</code></td></tr>
+            <tr><td>④</td><td>Bottom-right</td><td>Numbers + upper/lower + symbols <code>0-9a-zA-Z</code> + 13 symbols</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ref-block">
+        <h3>How to generate a password</h3>
+        <ol>
+          <li>Choose a pattern (① to ④).</li>
+          <li>Trace a path across the tiles — a shape you can remember (initials, a heart, an L, etc.).</li>
+          <li>Read the characters along your path in the chosen pattern's corner.</li>
+          <li>Concatenate them to form the password.</li>
+        </ol>
+      </div>
+      <div class="ref-block">
+        <h3>Notes</h3>
+        <ul>
+          <li>Keep the seed and your traced paths secret.</li>
+          <li>The card alone is not a password.</li>
+          <li>Card size: 85.6 × 53.98 mm (ISO/IEC 7810 ID-1).</li>
+          <li>Generated with PBKDF2-SHA256 (200,000 iterations).</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -520,7 +608,6 @@
     currentData.forEach((v, i) => {
       const clone = tileTpl.content.cloneNode(true);
       const tile = clone.querySelector('.tile');
-      // 内部的なタイル番号を data-index として保持
       tile.dataset.index = String(i);
       tile.setAttribute('title', `Tile #${String(i).padStart(2, '0')}`);
       
@@ -650,7 +737,7 @@
     const hits = [];
     currentData.forEach((v, i) => {
       const pos = [];
-      if (v.index === ch) pos.push('center'); // 中央も検索対象に追加
+      if (v.index === ch) pos.push('center');
       if (v.p1 === ch) pos.push('①');
       if (v.p2 === ch) pos.push('②');
       if (v.p3 === ch) pos.push('③');
