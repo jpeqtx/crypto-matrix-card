@@ -18,7 +18,7 @@ Crypto Matrix Card is a single-file web app that generates a **credit-card-sized
 
 The matrix is derived using **PBKDF2-SHA256 (200,000 iterations)** followed by SHA-256 counter-mode expansion. The same seed always produces the same card, and brute-forcing the seed is computationally expensive.
 
-![Screenshot](docs/screenshot.png)
+![Screenshot](Screenshot.png)
 
 ---
 
