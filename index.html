@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Matrix — Codebook Generator</title>
+<title>Crypto Matrix Card — Password Card Generator</title>
 <style>
   :root {
     color-scheme: light;
@@ -44,7 +44,6 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .subtitle { color: var(--text-secondary); font-size: 14px; margin: 4px 0 0; }
-  .version { color: var(--text-muted); font-size: 12px; font-family: ui-monospace, monospace; }
   .panel {
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 18px; margin-bottom: 20px;
@@ -179,7 +178,6 @@
   }
   .card-info .datetime { color: var(--text-muted); white-space: nowrap; }
 
-  /* Password generator */
   .pattern-select { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
   .pattern-btn {
     padding: 8px 14px; border: 1px solid var(--border-strong);
@@ -242,9 +240,19 @@
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   footer { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 32px; }
+  footer .version-footer {
+    margin-top: 8px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-family: ui-monospace, monospace;
+  }
   footer .copyright {
-    margin-top: 6px; font-size: 11px; letter-spacing: 0.08em;
-    color: var(--text-secondary); font-family: ui-monospace, monospace;
+    margin-top: 2px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    font-family: ui-monospace, monospace;
   }
 
   @media print {
@@ -296,10 +304,9 @@
 <div class="app">
   <header>
     <div>
-      <h1>Crypto Matrix</h1>
-      <p class="subtitle">Deterministic codebook generator</p>
+      <h1>Crypto Matrix Card</h1>
+      <p class="subtitle">Deterministic password card generator</p>
     </div>
-    <span class="version">v4.0 · passcard-mode</span>
   </header>
 
   <section class="panel">
@@ -373,6 +380,7 @@
 
   <footer>
     <div>PBKDF2-SHA256 · 40 tiles · 4 password patterns</div>
+    <div class="version-footer">Ver.4.0</div>
     <div class="copyright">2026 YNGMT</div>
   </footer>
 </div>
@@ -395,16 +403,14 @@
 
   const MAX_TILE_COUNT    = 40;
   const PBKDF2_ITERATIONS = 200000;
-  const PBKDF2_SALT       = 'crypto-matrix-v4';
+  const PBKDF2_SALT       = 'crypto-matrix-card-v4';
   const STREAM_BYTES      = 2048;
 
-  /* ---------- Character sets ---------- */
   const digits  = Array.from({ length: 10 }, (_, i) => String(i));
   const lower   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
   const upper   = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
   const symbols = ['-', '_', '!', '#', '$', '%', '&', '^', '(', ')', '+', '*', '/'];
 
-  /* ---------- PBKDF2 → SHA-256 counter mode ---------- */
   async function deriveStream(seedStr, totalBytes) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey(
@@ -429,7 +435,6 @@
     return out.slice(0, totalBytes);
   }
 
-  /* ---------- PRNG ---------- */
   function BytePRNG(bytes) { this.bytes = bytes; this.pos = 0; }
   BytePRNG.prototype.nextUint32 = function () {
     if (this.pos + 4 > this.bytes.length) this.pos = 0;
@@ -457,12 +462,11 @@
     return repeatArray(chars, Math.ceil(MAX_TILE_COUNT / chars.length));
   }
 
-  /* ---------- Value generation (4 patterns) ---------- */
   function createValues(prng) {
-    const p1 = shuffle(fillToMax(digits), prng);                                  // ① 数字
-    const p2 = shuffle(fillToMax([...digits, ...lower]), prng);                    // ② + 小文字
-    const p3 = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);          // ③ + 大文字
-    const p4 = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng); // ④ + 記号
+    const p1 = shuffle(fillToMax(digits), prng);
+    const p2 = shuffle(fillToMax([...digits, ...lower]), prng);
+    const p3 = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);
+    const p4 = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng);
 
     const items = [];
     for (let i = 0; i < MAX_TILE_COUNT; i++) {
@@ -477,7 +481,6 @@
     return items;
   }
 
-  /* ---------- DOM ---------- */
   const cardEl        = document.getElementById('card');
   const matrixEl      = document.getElementById('matrix');
   const seedInput     = document.getElementById('seed-input');
@@ -504,7 +507,6 @@
   let tracing       = false;
   let traceIndices  = [];
 
-  /* ---------- Render ---------- */
   function render() {
     matrixEl.innerHTML = '';
     currentTiles = [];
@@ -524,7 +526,6 @@
     matrixEl.appendChild(frag);
   }
 
-  /* ---------- Card footer ---------- */
   function formatDateTime(d) {
     const pad = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
@@ -537,7 +538,6 @@
     cardDtEl.textContent = formatDateTime(issuedAt);
   }
 
-  /* ---------- Password generation ---------- */
   function getPatternChar(idx) {
     const v = currentData[idx];
     if (!v) return '';
@@ -570,7 +570,6 @@
     lookupResult.innerHTML = '';
   }
 
-  /* ---------- Trace events ---------- */
   matrixEl.addEventListener('pointerdown', e => {
     const tile = e.target.closest('.tile');
     if (!tile) return;
@@ -592,7 +591,6 @@
   document.addEventListener('pointerup', () => { tracing = false; });
   document.addEventListener('pointercancel', () => { tracing = false; });
 
-  /* ---------- Pattern switch ---------- */
   patternSelect.addEventListener('click', e => {
     const btn = e.target.closest('.pattern-btn');
     if (!btn) return;
@@ -604,7 +602,6 @@
 
   btnClearPw.addEventListener('click', clearTrace);
 
-  /* ---------- Regenerate ---------- */
   async function regenerate(seedStr, newIssue) {
     currentSeed = String(seedStr);
     if (newIssue) issuedAt = new Date();
@@ -633,7 +630,6 @@
     }
   }
 
-  /* ---------- Lookup ---------- */
   function applyLookup(ch) {
     clearTrace();
     currentTiles.forEach(t => t.classList.remove('matched'));
@@ -662,7 +658,6 @@
     }
   }
 
-  /* ---------- Utils ---------- */
   function toast(msg) {
     toastEl.textContent = msg;
     toastEl.classList.add('show');
@@ -675,7 +670,6 @@
     return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  /* ---------- Events ---------- */
   btnGenerate.addEventListener('click', () => {
     const s = seedInput.value.trim();
     if (!s) { toast('シードを入力してください'); return; }
@@ -706,7 +700,6 @@
     if (e.key === 'Enter') btnGenerate.click();
   });
 
-  /* ---------- Init ---------- */
   regenerate('0', true);
 })();
 </script>
