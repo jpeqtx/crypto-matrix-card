@@ -134,9 +134,10 @@
     z-index: 1;
   }
   .tile .center {
-    font-family: ui-monospace, monospace; font-weight: 700;
+    font-family: ui-monospace, monospace; font-weight: 900;
     color: var(--text); line-height: 1; font-size: 36cqmin;
     opacity: 1;
+    -webkit-text-stroke: 0.5px var(--text);
   }
   .tile .corner {
     position: absolute; font-family: ui-monospace, monospace;
@@ -290,10 +291,10 @@
       border-radius: 0; box-shadow: none !important;
     }
     .tile .center {
-      color: #000; font-weight: 700; font-size: 4.2mm; opacity: 1;
+      color: #000; font-weight: 900; font-size: 4.2mm; opacity: 1;
+      -webkit-text-stroke: 0.1mm #000;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
-    /* 四隅はすべて黒で印刷 */
     .tile .corner {
       color: #000 !important; font-weight: 600; font-size: 2.4mm;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
@@ -310,7 +311,6 @@
     .card-info .seed { color: #000; max-width: 62%; }
     .card-info .datetime { color: #000; }
 
-    /* Quick reference */
     .print-reference {
       display: block;
       margin: 8mm auto 0;
@@ -556,7 +556,6 @@
     const p3 = shuffle(fillToMax([...digits, ...lower, ...upper]), prng);
     const p4 = shuffle(fillToMax([...digits, ...lower, ...upper, ...symbols]), prng);
 
-    // 中央用の文字プール: 数字(10) + 小文字(26) + ランダムな記号(4) = 40文字
     const randomSymbols = shuffle(symbols, prng).slice(0, 4);
     const centerPool = [...digits, ...lower, ...randomSymbols];
     const centerChars = shuffle(centerPool, prng);
