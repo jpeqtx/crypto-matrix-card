@@ -145,10 +145,10 @@
     font-weight: 600; line-height: 1; font-size: 28cqmin;
     display: inline-block;
   }
-  .tile .tl { top: 6%; left: 8%; color: var(--tl); border-bottom: 1.5px solid currentColor; }
-  .tile .tr { top: 6%; right: 8%; color: var(--tr); border-bottom: 1.5px dashed currentColor; }
-  .tile .bl { bottom: 6%; left: 8%; color: var(--bl); border-bottom: 1.5px dotted currentColor; }
-  .tile .br { bottom: 6%; right: 8%; color: var(--br); border-bottom: 3px double currentColor; }
+  .tile .tl { top: 6%; left: 8%; color: var(--tl); }
+  .tile .tr { top: 6%; right: 8%; color: var(--tr); }
+  .tile .bl { bottom: 6%; left: 8%; color: var(--bl); }
+  .tile .br { bottom: 6%; right: 8%; color: var(--br); }
   .tile.matched {
     border-color: var(--accent);
     background: rgba(14, 116, 144, 0.06);
@@ -420,7 +420,7 @@
       <button class="pattern-btn" data-pattern="4">④ Numbers + upper/lower + symbols</button>
     </div>
     <div class="password-result" id="password-result">
-      <span class="value placeholder">Drag across tiles to trace a path</span>
+      <span class="value placeholder">Drag across tiles or click tiles to trace a path</span>
       <span class="char-count" id="char-count"></span>
       <button class="btn" id="btn-clear-pw">Clear</button>
     </div>
@@ -468,7 +468,7 @@
         <h3>How to generate a password</h3>
         <ol>
           <li>Choose a pattern (① to ④).</li>
-          <li>Trace a path across the tiles — a shape you can remember (initials, a heart, an L, etc.).</li>
+          <li>Trace a path across the tiles — drag or click tiles one by one.</li>
           <li>Read the characters along your path in the chosen pattern's corner.</li>
           <li>Concatenate them to form the password.</li>
         </ol>
@@ -617,6 +617,8 @@
   let issuedAt      = new Date();
   let currentPattern = 1;
   let tracing       = false;
+  let dragDetected  = false;
+  let pointerdownIndex = -1;
   let traceIndices  = [];
 
   function render() {
@@ -660,7 +662,7 @@
   function updatePasswordDisplay() {
     const valueEl = passwordResEl.querySelector('.value');
     if (traceIndices.length === 0) {
-      valueEl.innerHTML = '<span class="placeholder">Drag across tiles to trace a path</span>';
+      valueEl.innerHTML = '<span class="placeholder">Drag across tiles or click tiles to trace a path</span>';
       charCountEl.textContent = '';
       return;
     }
@@ -681,6 +683,20 @@
     tile.classList.add('traced');
     updatePasswordDisplay();
   }
+  function removeTileFromTrace(idx) {
+    const pos = traceIndices.indexOf(idx);
+    if (pos === -1) return;
+    traceIndices.splice(pos, 1);
+    currentTiles.forEach((t, i) => {
+      t.classList.toggle('traced', traceIndices.includes(i));
+      t.classList.toggle('trace-start', traceIndices[0] === i);
+    });
+    updatePasswordDisplay();
+  }
+  function toggleTile(idx) {
+    if (traceIndices.includes(idx)) removeTileFromTrace(idx);
+    else addTileToTrace(currentTiles[idx]);
+  }
   function clearLookupHighlights() {
     currentTiles.forEach(t => t.classList.remove('matched'));
     lookupInput.value = '';
@@ -692,21 +708,43 @@
     if (!tile) return;
     e.preventDefault();
     clearLookupHighlights();
-    clearTrace();
+    pointerdownIndex = parseInt(tile.dataset.index, 10);
+    dragDetected = false;
     tracing = true;
-    addTileToTrace(tile);
     try { matrixEl.setPointerCapture(e.pointerId); } catch (_) {}
   });
+
   matrixEl.addEventListener('pointermove', e => {
     if (!tracing) return;
+    if (!dragDetected) {
+      // 最初の移動を検知したらドラッグ開始。新しいパスとしてクリアし、開始タイルを追加
+      dragDetected = true;
+      clearTrace();
+      addTileToTrace(currentTiles[pointerdownIndex]);
+    }
     const el = document.elementFromPoint(e.clientX, e.clientY);
     if (!el) return;
     const tile = el.closest('.tile');
     if (!tile || !matrixEl.contains(tile)) return;
     addTileToTrace(tile);
   });
-  document.addEventListener('pointerup', () => { tracing = false; });
-  document.addEventListener('pointercancel', () => { tracing = false; });
+
+  document.addEventListener('pointerup', () => {
+    if (!tracing) return;
+    if (!dragDetected && pointerdownIndex >= 0) {
+      // クリック判定: タイルをトグル
+      toggleTile(pointerdownIndex);
+    }
+    tracing = false;
+    dragDetected = false;
+    pointerdownIndex = -1;
+  });
+
+  document.addEventListener('pointercancel', () => {
+    tracing = false;
+    dragDetected = false;
+    pointerdownIndex = -1;
+  });
 
   patternSelect.addEventListener('click', e => {
     const btn = e.target.closest('.pattern-btn');
