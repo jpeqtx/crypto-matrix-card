@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -202,6 +202,11 @@
     color: var(--text-muted); font-weight: 400;
     font-size: 13px; letter-spacing: 0;
   }
+  .password-result .char-count {
+    font-size: 13px; font-weight: 500; color: var(--text-muted);
+    white-space: nowrap; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    letter-spacing: 0; min-width: 60px; text-align: right;
+  }
   .password-result .btn { padding: 6px 12px; font-size: 12px; }
   .trace-hint { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
 
@@ -241,18 +246,12 @@
 
   footer { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 32px; }
   footer .version-footer {
-    margin-top: 8px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    font-family: ui-monospace, monospace;
+    margin-top: 8px; font-size: 11px; letter-spacing: 0.08em;
+    color: var(--text-muted); font-family: ui-monospace, monospace;
   }
   footer .copyright {
-    margin-top: 2px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--text-secondary);
-    font-family: ui-monospace, monospace;
+    margin-top: 2px; font-size: 11px; letter-spacing: 0.08em;
+    color: var(--text-secondary); font-family: ui-monospace, monospace;
   }
 
   @media print {
@@ -343,16 +342,17 @@
   <section class="panel password-gen">
     <h3 class="section-title">Password Generator</h3>
     <div class="pattern-select" id="pattern-select">
-      <button class="pattern-btn active" data-pattern="1">① 数字のみ</button>
-      <button class="pattern-btn" data-pattern="2">② 数字 + 小文字</button>
-      <button class="pattern-btn" data-pattern="3">③ 数字 + 大小文字</button>
-      <button class="pattern-btn" data-pattern="4">④ 数字 + 大小文字 + 記号</button>
+      <button class="pattern-btn active" data-pattern="1">① Numbers only</button>
+      <button class="pattern-btn" data-pattern="2">② Numbers + lowercase</button>
+      <button class="pattern-btn" data-pattern="3">③ Numbers + upper & lowercase</button>
+      <button class="pattern-btn" data-pattern="4">④ Numbers + upper/lower + symbols</button>
     </div>
     <div class="password-result" id="password-result">
-      <span class="value placeholder">タイルをドラッグして経路をなぞってください</span>
+      <span class="value placeholder">Drag across tiles to trace a path</span>
+      <span class="char-count" id="char-count"></span>
       <button class="btn" id="btn-clear-pw">Clear</button>
     </div>
-    <div class="trace-hint">💡 なぞった経路上の文字が、選択中のパターンで連結されます。経路を変えれば無限に生成できます。</div>
+    <div class="trace-hint">💡 Characters on the traced path are combined based on the selected pattern. Change the path to generate an infinite variety.</div>
   </section>
 
   <section class="panel">
@@ -365,16 +365,16 @@
       <div class="tool">
         <h3>Legend (screen only)</h3>
         <div class="legend">
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--tl);"></span>① 数字のみ</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--tr);"></span>② 数字 + 小文字</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--bl);"></span>③ 数字 + 大小文字</div>
-          <div class="legend-item"><span class="legend-swatch" style="background:var(--br);"></span>④ 数字 + 大小文字 + 記号</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--tl);"></span>① Numbers only</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--tr);"></span>② Numbers + lowercase</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--bl);"></span>③ Numbers + upper & lowercase</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--br);"></span>④ Numbers + upper/lower + symbols</div>
         </div>
       </div>
     </div>
     <div class="actions">
       <button class="btn" id="btn-print">Print / Save PDF</button>
-      <span class="hint">クレカ原寸 85.6 × 53.98mm ／ PBKDF2-SHA256 (200,000 反復)</span>
+      <span class="hint">Credit card size 85.6 × 53.98mm / PBKDF2-SHA256 (200,000 iterations)</span>
     </div>
   </section>
 
@@ -497,6 +497,7 @@
   const btnPrint      = document.getElementById('btn-print');
   const patternSelect = document.getElementById('pattern-select');
   const passwordResEl = document.getElementById('password-result');
+  const charCountEl   = document.getElementById('char-count');
   const btnClearPw    = document.getElementById('btn-clear-pw');
 
   let currentData   = [];
@@ -546,10 +547,13 @@
   function updatePasswordDisplay() {
     const valueEl = passwordResEl.querySelector('.value');
     if (traceIndices.length === 0) {
-      valueEl.innerHTML = '<span class="placeholder">タイルをドラッグして経路をなぞってください</span>';
+      valueEl.innerHTML = '<span class="placeholder">Drag across tiles to trace a path</span>';
+      charCountEl.textContent = '';
       return;
     }
-    valueEl.textContent = traceIndices.map(getPatternChar).join('');
+    const pwd = traceIndices.map(getPatternChar).join('');
+    valueEl.textContent = pwd;
+    charCountEl.textContent = `${pwd.length} chars`;
   }
   function clearTrace() {
     traceIndices = [];
@@ -621,7 +625,7 @@
       updateCardInfo();
     } catch (err) {
       console.error(err);
-      toast('生成に失敗しました');
+      toast('Failed to generate');
     } finally {
       cardEl.classList.remove('loading');
       btnGenerate.disabled = false;
@@ -672,7 +676,7 @@
 
   btnGenerate.addEventListener('click', () => {
     const s = seedInput.value.trim();
-    if (!s) { toast('シードを入力してください'); return; }
+    if (!s) { toast('Please enter a seed'); return; }
     regenerate(s, true);
   });
   btnRandom.addEventListener('click', () => {
