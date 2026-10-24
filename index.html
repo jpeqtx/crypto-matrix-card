@@ -67,6 +67,7 @@
     color: var(--text); font-family: ui-monospace, monospace; font-size: 14px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
+  input[type="text"]::placeholder { color: var(--text-muted); opacity: 0.7; }
   input:focus {
     outline: none; border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-muted);
@@ -119,6 +120,15 @@
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(5, 1fr);
     gap: 4px; margin-bottom: 8px; min-height: 0;
+  }
+  .matrix:empty::before {
+    content: 'Enter a seed and click Generate';
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    place-self: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   .tile {
     position: relative; background: #fff; border: 1px solid #c7c5c4;
@@ -295,6 +305,7 @@
     .panel, .tools, footer, header, .actions, .toast, .controls, .toggle-row, .password-gen {
       display: none !important;
     }
+    .matrix:empty::before { display: none; }
     .card {
       width: 85.6mm; height: 53.98mm; max-width: none;
       margin: 0 !important; background: #fff;
@@ -383,7 +394,7 @@
     <div class="controls">
       <div class="field">
         <label for="seed-input">Seed (text or number, any length)</label>
-        <input id="seed-input" type="text" value="0" autocomplete="off" spellcheck="false">
+        <input id="seed-input" type="text" placeholder="e.g. k7Xm2pQ9" autocomplete="off" spellcheck="false">
       </div>
       <button class="btn primary" id="btn-generate">Generate</button>
       <button class="btn" id="btn-random">Random</button>
@@ -486,7 +497,7 @@
 
   <footer>
     <div>PBKDF2-SHA256 · 40 tiles · 4 password patterns</div>
-    <div class="version-footer">Ver.4.1</div>
+    <div class="version-footer">Ver.4.2</div>
     <div class="copyright">2026 YNGMT</div>
   </footer>
 </div>
@@ -827,10 +838,20 @@
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toastEl.classList.remove('show'), 1600);
   }
-  function generateStrongSeed() {
-    const buf = new Uint8Array(8);
-    crypto.getRandomValues(buf);
-    return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
+
+  // Base62 (0-9, a-z, A-Z) の16文字シードを生成（剰余バイアスなし）
+  function generateStrongSeed(length = 16) {
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    const buf = new Uint8Array(1);
+    while (result.length < length) {
+      crypto.getRandomValues(buf);
+      // 248 = 62 * 4。248以上の値は捨てて偏りをなくす
+      if (buf[0] < 248) {
+        result += chars[buf[0] % 62];
+      }
+    }
+    return result;
   }
 
   btnGenerate.addEventListener('click', () => {
@@ -854,7 +875,13 @@
       toast('Seed copied');
     }
   });
-  btnPrint.addEventListener('click', () => window.print());
+  btnPrint.addEventListener('click', () => {
+    if (currentData.length === 0) {
+      toast('Please generate a card first');
+      return;
+    }
+    window.print();
+  });
   toggleSeed.addEventListener('change', updateCardInfo);
   lookupInput.addEventListener('input', () => {
     applyLookup(lookupInput.value.trim().slice(0, 1));
@@ -863,7 +890,7 @@
     if (e.key === 'Enter') btnGenerate.click();
   });
 
-  regenerate('0', true);
+  // 初期状態ではカードを生成しない（空欄＋プレースホルダー表示）
 })();
 </script>
 </body>
